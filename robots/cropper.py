@@ -11,9 +11,26 @@ def readPages(reader):
     for pageNum in range(reader.numPages):
         page = reader.getPage(pageNum)
         print(pageNum)
-        print(page,"\n\n")
+        # print(page)
+        searchPolygonAnnottations(page)
 
-def cropper(filename):
+def searchPolygonAnnottations(page):
+    '''Search for polygon annottations in a page'''
+    if '/Annots' in page:
+        annottsObjects = page['/Annots'].getObject()
+        numOfAnnottations = len(annottsObjects)
+        
+        for i in range(numOfAnnottations):
+            print(annottsObjects[i].getObject(),"\n")
+            if '/Rect' in annottsObjects[i].getObject():
+                print("Found a polygon annotattion!")
+
+
+        print("Found some annottations!\n\n")
+    else:
+        print("No annottations found!\n")
+
+def run(filename):
     '''Run cropper robot'''
     reader = openFile(filename)
     readPages(reader)
