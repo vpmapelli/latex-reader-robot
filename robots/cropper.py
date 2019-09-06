@@ -1,5 +1,7 @@
 import PyPDF2
 import os
+from wand.image import Image
+from wand.color import Color
 
 def openFile(filename):
     '''Simple wrapper to open a pdf file'''
@@ -34,7 +36,6 @@ def cropEquations(filename, fileAnnotsList = []):
     '''Iterate through fileAnnotsList and generate a cropped pdf for each of them'''
 
     filenameWithoutExtension = filename.split(".")[0]
-    
     for i,pageRectList in enumerate(fileAnnotsList):
         print("Page number = {}".format(i))
         if not pageRectList:
@@ -59,25 +60,28 @@ def cropEquations(filename, fileAnnotsList = []):
 
                 writer.write(outstream)
                 print("Generated {} pdf file".format(j))
-
-
-
-
-
-
             print("\n")
+
+def convertPDFeqsToPNG(filename):
+    '''Converting all cropped pdf files to png images'''
+
+    for localPath, _, files in os.walk("./" + filename.split(".")[0]):
+        for file in files:
+            with Image(filename=localPath+"/"+file, resolution=300) as img:
+                with Image(width=img.width, height=img.height, background=Color("White")) as bg:
+                    bg.composite(img,0,0)
+                    bg.save(filename=localPath+"/"+file.split(".")[0]+".png")
+                    print("Converted {} to {}".format(file,file.split(".")[0]+".png"))
+            
+            #Remove original pdf
+            os.remove(localPath+"/"+file)
+            print("Deleting {}".format(file))
+
 
 def run(filename):
     '''Run cropper robot'''
+
     reader = openFile(filename)
     fileAnnotsList = readPagesAndSaveAnnotsPositions(reader)
     cropEquations(filename, fileAnnotsList)
-
-    for i,pageList in enumerate(fileAnnotsList):
-        print("Page number = {}".format(i))
-        if not pageList:
-            print("No annotations found\n")
-        else:
-            for rect in pageList:
-                print("Annotation position: {}".format(rect))
-            print("\n")
+    convertPDFeqsToPNG(filename)
