@@ -1,4 +1,5 @@
 import PyPDF2
+import os
 
 def openFile(filename):
     '''Simple wrapper to open a pdf file'''
@@ -29,11 +30,48 @@ def searchPolygonAnnottations(page):
         
     return rectList
 
+def cropEquations(filename, fileAnnotsList = []):
+    '''Iterate through fileAnnotsList and generate a cropped pdf for each of them'''
+
+    filenameWithoutExtension = filename.split(".")[0]
+    
+    for i,pageRectList in enumerate(fileAnnotsList):
+        print("Page number = {}".format(i))
+        if not pageRectList:
+            print("No annotations found\n")
+        else:
+            for j,rect in enumerate(pageRectList):
+
+                reader = openFile(filename)
+                page = reader.getPage(i)
+
+                # Trying to crop with mediaBox first
+                page.mediaBox.setLowerLeft(rect[0:2])
+                page.mediaBox.setUpperRight(rect[2:])
+
+                writer = PyPDF2.PdfFileWriter()
+                outFilename = "./" + filenameWithoutExtension + "/pg{}_eq{}".format(i+1,j) + ".pdf"
+                os.makedirs(filenameWithoutExtension, exist_ok=True)
+                outstream = open(outFilename,'wb+')
+
+                writer.addPage(page)
+                writer.removeLinks()
+
+                writer.write(outstream)
+                print("Generated {} pdf file".format(j))
+
+
+
+
+
+
+            print("\n")
 
 def run(filename):
     '''Run cropper robot'''
     reader = openFile(filename)
     fileAnnotsList = readPagesAndSaveAnnotsPositions(reader)
+    cropEquations(filename, fileAnnotsList)
 
     for i,pageList in enumerate(fileAnnotsList):
         print("Page number = {}".format(i))
