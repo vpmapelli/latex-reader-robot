@@ -62,12 +62,11 @@ def queryAllImages(imagesIterator, credentials):
 
         for localPath, _, files in imagesIterator:
                 for image in files:
+                        print("[mathpix] Fetching {}".format(image))
                         latexSingleImageDict = querySingleImage(localPath,image,credentials)
+                        print("[mathpix] Mathpix answered {} query".format(image))
                         latexSingleImageDict['filename'] = image.split(".")[0]
                         responsesList.append(latexSingleImageDict)
-        
-        for item in responsesList:
-                print(json.dumps(item, indent=4, sort_keys=True))
 
         allLatexList = map(checkForErrors, responsesList)
 
@@ -95,6 +94,7 @@ def checkConfidenceRate(responseDict):
 
 def generateFile(allLatexList, allLatexResponseDicts,imagesPath):
 
+        print("[mathpix] Generating tex and dict files...")
         with open("./"+imagesPath+"/"+imagesPath+".tex","w+") as texFile:
                 for i,latexString in enumerate(allLatexList):
                         texFile.write(allLatexResponseDicts[i]["filename"].replace("eq","Equation ").replace("_"," ").replace("pg","Page ")+"\n")
@@ -102,13 +102,17 @@ def generateFile(allLatexList, allLatexResponseDicts,imagesPath):
                         if checkConfidenceRate(allLatexResponseDicts[i]): texFile.write("% Confidence rate lower than 0.80\n")
                         texFile.write(latexString + "\n")
                         texFile.write("\\end{equation}\n\n")
+        print("[mathpix] Generated tex file")
         
         with open("./"+imagesPath+"/"+imagesPath+"_responseDicts.txt", "w+") as dictFile:
                 for dict in allLatexResponseDicts:
                         dictFile.write(json.dumps(dict, indent=4, sort_keys=True))
+        print("[mathpix] Generated dict file")
 
 
 def run(filename):
+
+    print("[mathpix] Started...")
 
     imagesPath = filename.split(".")[0]
 

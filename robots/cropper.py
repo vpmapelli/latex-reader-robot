@@ -37,9 +37,9 @@ def cropEquations(filename, fileAnnotsList = []):
 
     filenameWithoutExtension = filename.split(".")[0]
     for i,pageRectList in enumerate(fileAnnotsList):
-        print("Page number = {}".format(i))
+        print("[cropper] Page number = {}".format(i))
         if not pageRectList:
-            print("No annotations found\n")
+            print("[cropper] No annotations found")
         else:
             for j,rect in enumerate(pageRectList):
 
@@ -59,8 +59,7 @@ def cropEquations(filename, fileAnnotsList = []):
                 writer.removeLinks()
 
                 writer.write(outstream)
-                print("Generated {} pdf file".format(j))
-            print("\n")
+                print("[cropper] Generated {} pdf file".format(j))
 
 def convertPDFeqsToPNG(filename):
     '''Converting all cropped pdf files to png images'''
@@ -71,15 +70,17 @@ def convertPDFeqsToPNG(filename):
                 with Image(width=img.width, height=img.height, background=Color("White")) as bg:
                     bg.composite(img,0,0)
                     bg.save(filename=localPath+"/"+file.split(".")[0]+".png")
-                    print("Converted {} to {}".format(file,file.split(".")[0]+".png"))
+                    print("[cropper] Converted {} to {}".format(file,file.split(".")[0]+".png"))
             
             #Remove original pdf
             os.remove(localPath+"/"+file)
-            print("Deleting {}".format(file))
+            print("[cropper] Deleting {}".format(file))
 
 
 def run(filename):
     '''Run cropper robot'''
+
+    print("[cropper] Started...")
 
     reader = openFile(filename)
     fileAnnotsList = readPagesAndSaveAnnotsPositions(reader)
