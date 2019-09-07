@@ -8,5 +8,5 @@ if __name__ == "__main__":
     if (len(sys.argv) != 2):
         raise("File was not determined!")
     
-    # robots.cropper.run(sys.argv[1])
+    robots.cropper.run(sys.argv[1])
     robots.mathpix.run(sys.argv[1])

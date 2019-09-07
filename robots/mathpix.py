@@ -81,14 +81,30 @@ def checkForErrors(responseDict):
         else:
                 return responseDict["latex_styled"]
 
-def generateFile(allLatexList, allLatexReponseDicts):
+def checkConfidenceRate(responseDict):
 
-        with open("./latex/equations.tex","w+") as texFile:
-                for latexString in allLatexList:
-                        texFile.write(latexString + "\n\n")
+        if "latex_confidence_rate" in responseDict:
+                if responseDict["latex_confidence_rate"] < 0.8:
+                        return True
+                else:
+                        return False
+        else:
+                return False
+
         
-        with open("./latex/allDicts.txt", "w+") as dictFile:
-                for dict in allLatexReponseDicts:
+
+def generateFile(allLatexList, allLatexResponseDicts,imagesPath):
+
+        with open("./"+imagesPath+"/"+imagesPath+".tex","w+") as texFile:
+                for i,latexString in enumerate(allLatexList):
+                        texFile.write(allLatexResponseDicts[i]["filename"].replace("eq","Equation ").replace("_"," ").replace("pg","Page ")+"\n")
+                        texFile.write("\\begin{equation}\n")
+                        if checkConfidenceRate(allLatexResponseDicts[i]): texFile.write("% Confidence rate lower than 0.80\n")
+                        texFile.write(latexString + "\n")
+                        texFile.write("\\end{equation}\n\n")
+        
+        with open("./"+imagesPath+"/"+imagesPath+"_responseDicts.txt", "w+") as dictFile:
+                for dict in allLatexResponseDicts:
                         dictFile.write(json.dumps(dict, indent=4, sort_keys=True))
 
 
@@ -98,12 +114,11 @@ def run(filename):
 
     credentials = loadCredential()
 
-    os.makedirs("latex", exist_ok=True)
     imagesIterator = os.walk("./" + imagesPath)
 
     allLatexList, allLatexReponseDicts = queryAllImages(imagesIterator, credentials)
 
-    generateFile(allLatexList, allLatexReponseDicts)
+    generateFile(allLatexList, allLatexReponseDicts, imagesPath)
 #     latexDict = querySingleImage(imagesPath,"pg6_eq0.png",credentials)
 
     # with open("./latex/equations.tex",'w+') as texFile:
