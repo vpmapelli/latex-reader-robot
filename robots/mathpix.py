@@ -61,7 +61,7 @@ def queryAllImages(imagesIterator, credentials):
         responsesList = []
 
         for localPath, _, files in imagesIterator:
-                for image in files:
+                for image in sorted(files):
                         print("[mathpix] Fetching {}".format(image))
                         latexSingleImageDict = querySingleImage(localPath,image,credentials)
                         print("[mathpix] Mathpix answered {} query".format(image))
@@ -123,10 +123,3 @@ def run(filename):
     allLatexList, allLatexReponseDicts = queryAllImages(imagesIterator, credentials)
 
     generateFile(allLatexList, allLatexReponseDicts, imagesPath)
-#     latexDict = querySingleImage(imagesPath,"pg6_eq0.png",credentials)
-
-    # with open("./latex/equations.tex",'w+') as texFile:
-    #     texFile.write(latexDict["latex_styled"])
-
-
-#     print(json.dumps(latexDict, indent=4, sort_keys=True))
