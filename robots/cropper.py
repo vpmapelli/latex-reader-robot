@@ -66,15 +66,16 @@ def convertPDFeqsToPNG(filename):
 
     for localPath, _, files in os.walk("./" + filename.split(".")[0]):
         for file in files:
-            with Image(filename=localPath+"/"+file, resolution=500) as img:
-                with Image(width=img.width, height=img.height, background=Color("White")) as bg:
-                    bg.composite(img,0,0)
-                    bg.save(filename=localPath+"/"+file.split(".")[0]+".png")
-                    print("[cropper] Converted {} to {}".format(file,file.split(".")[0]+".png"))
-            
-            #Remove original pdf
-            os.remove(localPath+"/"+file)
-            print("[cropper] Deleting {}".format(file))
+            if (file.split(".")[1] == "pdf"):
+                with Image(filename=localPath+"/"+file, resolution=500) as img:
+                    with Image(width=img.width, height=img.height, background=Color("White")) as bg:
+                        bg.composite(img,0,0)
+                        bg.save(filename=localPath+"/"+file.split(".")[0]+".png")
+                        print("[cropper] Converted {} to {}".format(file,file.split(".")[0]+".png"))
+                
+                #Remove original pdf
+                os.remove(localPath+"/"+file)
+                print("[cropper] Deleting {}".format(file))
 
 
 def run(filename):
