@@ -6,7 +6,7 @@ import os
 
 def loadCredential():
 
-    with open("./credentials/mathPix.json") as json_file:
+    with open(os.path.dirname(sys.argv[0])+"/credentials/mathPix.json") as json_file:
         data = json.load(json_file)
     return data
 
