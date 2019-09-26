@@ -66,7 +66,7 @@ def convertPDFeqsToPNG(filename):
 
     for localPath, _, files in os.walk("./" + filename.split(".")[0]):
         for file in files:
-            with Image(filename=localPath+"/"+file, resolution=300) as img:
+            with Image(filename=localPath+"/"+file, resolution=500) as img:
                 with Image(width=img.width, height=img.height, background=Color("White")) as bg:
                     bg.composite(img,0,0)
                     bg.save(filename=localPath+"/"+file.split(".")[0]+".png")
