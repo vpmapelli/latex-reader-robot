@@ -27,7 +27,7 @@ def searchPolygonAnnottations(page):
         numOfAnnottations = len(annottsObjects)
         
         for i in range(numOfAnnottations):
-            if '/Rect' in annottsObjects[i].getObject():
+            if annottsObjects[i].getObject()['/Subtype'] ==  '/Polygon':
                 rectList.append(annottsObjects[i].getObject()['/Rect'])
         
     return rectList
